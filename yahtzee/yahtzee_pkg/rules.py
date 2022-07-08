@@ -49,7 +49,7 @@ def straight_check(hand):
             print("Big Straight!")
             return
 
-# Check if 3 of a Kind
+# Anything Check if 3 of a Kind
 
 
 # Check if Two Pairs
