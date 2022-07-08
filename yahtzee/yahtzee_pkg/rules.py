@@ -1,4 +1,4 @@
-
+# Making a handful of changes to commit
 
 hand = [1, 2, 3, 4, 5]
 hand_score = 0
@@ -65,3 +65,7 @@ def three_kind_check(hand):
 # Check if Two Pairs
 
 # Check if One Pair
+
+
+for i in ("Git commit"):
+    print(i)
