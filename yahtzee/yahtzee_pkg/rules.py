@@ -52,20 +52,9 @@ def straight_check(hand):
 # Check if 3 of a Kind
 
 
-def three_kind_check(hand):
-    global hand_score
-    hand.sort()
-    if len(set(hand)) == 3:
-        if hand.count(hand[0]) == 3 or hand.count(hand[1]) == 3 or hand.count(hand[2]) == 3:
-            print("Three of a kind!")
-            hand_score = sum(hand)
-            show_score(hand, hand_score)
-            return
-
 # Check if Two Pairs
 
 # Check if One Pair
-
-
 for i in ("Git commit"):
     print(i)
+# change change change, all I do is change
