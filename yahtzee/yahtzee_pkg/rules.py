@@ -1,6 +1,4 @@
 
-from platform import java_ver
-
 
 hand = [1, 2, 3, 4, 5]
 hand_score = 0
