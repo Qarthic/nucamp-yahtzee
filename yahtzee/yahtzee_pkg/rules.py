@@ -23,16 +23,12 @@ def yahtzee_check(hand):
 
 def four_house_check(hand):
     global hand_score
-    hand.sort()
     if len(set(hand)) == 2:
-        if hand.count(hand[0]) == 4:
-            print("Four of a kind! That's great!")
-            hand_score = 40 + sum(hand)
-            print(f"{hand} {hand_score}")
-        elif hand.count(hand[0]) == 3 or hand.count(hand[0]) == 2:
-            hand_score = 40 + sum(hand)
-            print("Full House!")
-            print(f"{hand} {hand_score}")
+        for di in hand:
+            if hand.count(di) == 4:
+                return "four of a kind"
+            else:
+                return "Full House"
 
 # Check if Straight
 
@@ -53,13 +49,10 @@ def straight_check(hand):
 
 def three_kind_check(hand):
     global hand_score
-    hand.sort()
     if len(set(hand)) == 3:
         for di in hand:
             if hand.count(di) == 3:
                 return "Three of a kind"
-            show_score(hand, hand_score)
-            return
 
 # Check if Two Pairs
 
