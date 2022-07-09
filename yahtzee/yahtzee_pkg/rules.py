@@ -1,4 +1,3 @@
-# Making a handful of changes to commit
 
 hand = [1, 2, 3, 4, 5]
 hand_score = 0
@@ -65,4 +64,23 @@ def three_kind_check(hand):
 # Check if Two Pairs
 
 
+def two_pairs_check(hand):
+    global hand_score
+    hand.sort()
+    if len(set(hand)) == 3:
+        if (hand.count(hand[0]) == 2 and hand.count(hand[2]) == 3) or (hand.count(hand[1]) == 2 and hand.count(hand[3])) or (hand.count(hand[0]) == 2 and hand.count(hand[3])):
+            print("Two pairs!")
+            hand_score = sum(hand)
+            show_score(hand, hand_score)
+            return
+
 # Check if One Pair
+
+
+def one_pair_check(hand):
+    global hand_score
+    hand.sort()
+    if len(set(hand)) == 4:
+        for di in hand:
+            if hand.count(di) == 2:
+                return "One pair"
