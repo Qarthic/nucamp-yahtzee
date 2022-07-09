@@ -49,7 +49,7 @@ def straight_check(hand):
             print("Big Straight!")
             return
 
-# Anything Check if 3 of a Kind
+# Check if 3 of a Kind
 
 
 def three_kind_check(hand):
@@ -66,6 +66,3 @@ def three_kind_check(hand):
 
 
 # Check if One Pair
-for i in ("Git commit"):
-    print(i)
-# change change change, all I do is change
