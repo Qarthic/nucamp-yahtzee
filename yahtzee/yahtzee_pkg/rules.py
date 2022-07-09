@@ -55,9 +55,9 @@ def three_kind_check(hand):
     global hand_score
     hand.sort()
     if len(set(hand)) == 3:
-        if hand.count(hand[0]) == 3 or hand.count(hand[1]) == 3 or hand.count(hand[2]) == 3:
-            print("Three of a kind!")
-            hand_score = sum(hand)
+        for di in hand:
+            if hand.count(di) == 3:
+                return "Three of a kind"
             show_score(hand, hand_score)
             return
 
