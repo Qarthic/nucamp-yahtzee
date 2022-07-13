@@ -1,7 +1,9 @@
 
+
+
 hand = [1, 2, 3, 4, 5]
 hand_score = 0
-
+final_hand = ""
 # Beautify Score and print
 
 
@@ -13,67 +15,86 @@ def show_score(hand, hand_score):
 
 
 def yahtzee_check(hand):
-    global hand_score
+    global hand_score, final_hand
     if len(set(hand)) == 1:
-        print("YAHTZEE!!!")
-        print(f"{hand}")
+        final_hand = "Yahtzee!"
+        return final_hand
 
 # Check if 4 of a Kind or Full House
 
 
 def four_house_check(hand):
-    global hand_score
+    global hand_score, final_hand
     if len(set(hand)) == 2:
         for di in hand:
             if hand.count(di) == 4:
-                return "four of a kind"
+                final_hand = "Four of a kind"
+                return final_hand
             else:
-                return "Full House"
+                final_hand = "Full House"
+                return final_hand
 
 # Check if Straight
 
 
 def straight_check(hand):
-    global hand_score
+    global hand_score, final_hand
     hand.sort()
     if sorted(hand) == list(range(min(hand), max(hand)+1)):
         if sum(hand) == 15:
-            print("Small Straight")
-            return
+            final_hand = "Small Straight"
+            return final_hand
         elif sum(hand) == 20:
-            print("Big Straight!")
-            return
+            final_hand = "Big Straight!"
+            return final_hand
 
 # Check if 3 of a Kind
 
 
 def three_kind_check(hand):
-    global hand_score
+    global hand_score, final_hand
     if len(set(hand)) == 3:
         for di in hand:
             if hand.count(di) == 3:
-                return "Three of a kind"
+                final_hand = "Three of a kind"
+                return final_hand
 
 # Check if Two Pairs
 
 
 def two_pairs_check(hand):
-    global hand_score
+    global hand_score, final_hand
     hand.sort()
     if len(set(hand)) == 3:
         if (hand.count(hand[0]) == 2 and hand.count(hand[2]) == 3) or (hand.count(hand[1]) == 2 and hand.count(hand[3])) or (hand.count(hand[0]) == 2 and hand.count(hand[3])):
-            print("Two pairs!")
-            hand_score = sum(hand)
-            show_score(hand, hand_score)
-            return
+            final_hand = "Two of a kind"
+            return final_hand
 
 # Check if One Pair
 
 
 def one_pair_check(hand):
-    global hand_score
+    global hand_score, final_hand
     hand.sort()
     if len(set(hand)) == 4:
         for di in hand:
             if hand.count(di) == 2:
-                return "One pair"
+                final_hand = "One pair"
+                return final_hand
+
+
+def run_yahtzee():
+    global final_hand
+    hand = list(input("Enter a list"))
+    print(hand)
+    while final_hand == "":
+        yahtzee_check(hand)
+        four_house_check(hand)
+        three_kind_check(hand)
+        two_pairs_check(hand)
+        one_pair_check(hand)
+        straight_check(hand)
+    print(final_hand)
+
+
+run_yahtzee()
