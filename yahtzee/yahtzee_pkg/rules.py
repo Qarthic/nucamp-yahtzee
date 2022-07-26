@@ -1,9 +1,8 @@
 
 
 
-hand = [1, 2, 3, 4, 5]
-hand_score = 0
-final_hand = ""
+
+
 # Beautify Score and print
 
 
