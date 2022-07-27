@@ -1,97 +1,141 @@
 
-
-
-
-
+#              Score Card
+#  ------------------------------------- 
+# | Upper Sect     | Score              |
+#  -------------------------------------
+# | Aces           | Tot of Aces only   |
+# | Twos           | Tot of Twos only   |
+# | Threes         | Tot of Threes only |
+# | Fours          | Tot of Fours only  |
+# | Fives          | Tot of Fives only  |
+# | Six            | Tot of Sixes only  |
+#  ------------------------------------- 
+# | Lower Sect     | Score              |
+#  ------------------------------------- 
+# | 3 Kind         | Tot of all 5 Dice  |
+# | 4 Kind         | Tot of all 5 Dice  |
+# | Full House     | 25 Points          |
+# | Small Straight | 30 Points          |
+# | Large Straight | 40 Points          |
+# | YAHTZEE        | 50 Points          |
+# | Chance         | Tot of all 5 Dice  |
+#  ------------------------------------- 
 
 # Beautify Score and print
 
 
-def show_score(hand, hand_score):
-    hand = (', '.join(hand))
-    print(f"Your hand was: {hand}\nYour score was: {hand_score}")
+# Check if already stored 
+
+def catagory_taken(player):
+    for key, sub_dict in player.score_card.items():
+        for sub_dict, value in sub_dict.items():
+            if sub_dict == player.catagory:
+                if value != 0:
+                    return True
 
 # Check if Yahtzee
 
-
-def yahtzee_check(hand):
-    global hand_score, final_hand
-    if len(set(hand)) == 1:
-        final_hand = "Yahtzee!"
-        return final_hand
+def yahtzee_check(player):
+    player.get_uniques(player.hand)
+    section = player.score_card["Lower"]
+    if len(player.uniques) == 1:
+        player.catagory = "Yahtzee"
+        if player.catagory in section.keys() and catagory_taken(player) != True:
+            player.score += 50
+            section[player.catagory] = 50 
+            return player
+        else:
+            player.catagory = ""
+            return player
 
 # Check if 4 of a Kind or Full House
 
-
-def four_house_check(hand):
-    global hand_score, final_hand
-    if len(set(hand)) == 2:
-        for di in hand:
-            if hand.count(di) == 4:
-                final_hand = "Four of a kind"
-                return final_hand
+def four_house_check(player):
+    player.get_uniques(player.hand)
+    section = player.score_card["Lower"]
+    if len(player.uniques) == 2:
+        for die in player.hand:
+            if player.hand.count(die) == 4:
+                player.catagory = "4 Kind"
+                if player.catagory in section.keys() and catagory_taken(player) != True:
+                    player.score += sum(player.hand)
+                    section[player.catagory] = sum(player.hand) 
+                    return player   
+                else:
+                    player.catagory = ""
+                    return player
             else:
-                final_hand = "Full House"
-                return final_hand
+                player.catagory = "Full House"
+                if player.catagory in section.keys() and catagory_taken(player) != True:
+                    player.score += 25
+                    section[player.catagory] = 25 
+                    return player   
+                else:
+                    player.catagory = ""
+                    return player
 
 # Check if Straight
 
-
-def straight_check(hand):
-    global hand_score, final_hand
-    hand.sort()
-    if sorted(hand) == list(range(min(hand), max(hand)+1)):
-        if sum(hand) == 15:
-            final_hand = "Small Straight"
-            return final_hand
-        elif sum(hand) == 20:
-            final_hand = "Big Straight!"
-            return final_hand
+def straight_check(player):
+    section = player.score_card["Lower"]
+    if player.hand == [1, 2, 3, 4, 5]:
+        player.catagory = "Small Straight"
+        if player.catagory in section.keys() and catagory_taken(player) != True:
+            player.score += 30
+            section[player.catagory] = 30
+            return player   
+        else:
+            player.catagory = ""
+            return player
+    elif player.hand == [2, 3, 4, 5, 6]:
+        player.catagory = "Large Straight"
+        if player.catagory in section.keys() and catagory_taken(player) != True:
+            player.score += 40
+            section[player.catagory] = 30
+            return player   
+        else:
+            player.catagory = ""
+            return player
 
 # Check if 3 of a Kind
 
+def three_kind_check(player):
+    player.get_uniques(player.hand)
+    section = player.score_card["Lower"]
+    if len(player.uniques) == 3:
+        for die in player.hand:
+            if player.hand.count(die) == 3:
+                player.catagory = "3 Kind"
+                if player.catagory in section.keys() and catagory_taken(player) != True:
+                    player.score += sum(player.hand)
+                    section[player.catagory] = sum(player.hand) 
+                    return player   
+                else:
+                    player.catagory = ""
+                    return player
 
-def three_kind_check(hand):
-    global hand_score, final_hand
-    if len(set(hand)) == 3:
-        for di in hand:
-            if hand.count(di) == 3:
-                final_hand = "Three of a kind"
-                return final_hand
+def upper_check(player):
+    print("It doesn't look like your hand matches any available Lower Section hands.")
+    if player.score_card["Lower"]["Chance"] == 0:
+        print("Would you like to score Chance, or choose from the Upper options remaining?")
+        choice = input("1. Chance\n2. Uppers remaining\n>> ")
+        if choice == "1":
+            player.score_card["Lower"]["Chance"] = sum(player.hand)
+            player.catagory = "Chance"
+        
 
-# Check if Two Pairs
+# Global check
 
-
-def two_pairs_check(hand):
-    global hand_score, final_hand
-    hand.sort()
-    if len(set(hand)) == 3:
-        if (hand.count(hand[0]) == 2 and hand.count(hand[2]) == 3) or (hand.count(hand[1]) == 2 and hand.count(hand[3])) or (hand.count(hand[0]) == 2 and hand.count(hand[3])):
-            final_hand = "Two of a kind"
-            return final_hand
-
-# Check if One Pair
-
-
-def one_pair_check(hand):
-    global hand_score, final_hand
-    hand.sort()
-    if len(set(hand)) == 4:
-        for di in hand:
-            if hand.count(di) == 2:
-                final_hand = "One pair"
-                return final_hand
-
-
-def run_hand_check(hand):
-    global final_hand
-    while final_hand == "":
-        yahtzee_check(hand)
-        four_house_check(hand)
-        three_kind_check(hand)
-        two_pairs_check(hand)
-        one_pair_check(hand)
-        straight_check(hand)
-    print(final_hand)
+def run_hand_check(player):
+    player.catagory = ""
+    while player.catagory == "":
+        yahtzee_check(player)
+        four_house_check(player)
+        three_kind_check(player)
+        straight_check(player)
+        if player.catagory == "":
+            upper_check()
+        print(f"You had a {player.catagory}")
+        return player
 
 
