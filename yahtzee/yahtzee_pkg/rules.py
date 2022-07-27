@@ -3,6 +3,7 @@
 
 
 
+
 # Beautify Score and print
 
 
@@ -82,10 +83,8 @@ def one_pair_check(hand):
                 return final_hand
 
 
-def run_hand_check():
+def run_hand_check(hand):
     global final_hand
-    hand = list(input("Enter a list"))
-    print(hand)
     while final_hand == "":
         yahtzee_check(hand)
         four_house_check(hand)

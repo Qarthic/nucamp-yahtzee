@@ -1,3 +1,5 @@
 yahtzee_old/
 help/
 main/
+__pycache__
+yahtzee_pkg/__pycache__
