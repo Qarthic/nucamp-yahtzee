@@ -82,7 +82,7 @@ def one_pair_check(hand):
                 return final_hand
 
 
-def run_yahtzee():
+def run_hand_check():
     global final_hand
     hand = list(input("Enter a list"))
     print(hand)
@@ -96,4 +96,3 @@ def run_yahtzee():
     print(final_hand)
 
 
-run_yahtzee()

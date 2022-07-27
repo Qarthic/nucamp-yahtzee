@@ -1,5 +1,6 @@
 from random import randint
 from time import sleep
+from yahtzee_pkg.rules import 
 
 class Player:
     def __init__(self, name):
@@ -68,10 +69,8 @@ def single_player(player_list):
 def multiplayer(player_list):
   p1 = player_list[0]
   p1.create_hand()
-  print(p1.hand)
   p2 = player_list[1]
   p2.create_hand()
-  print(p2.hand)
 
 # ""
 def yahtzee():
