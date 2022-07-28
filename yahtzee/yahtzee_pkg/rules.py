@@ -23,7 +23,6 @@ from time import sleep
 # | Chance         | Tot of all 5 Dice  |
 #  ------------------------------------- 
 
-# Beautify Score and print
 
 
 def lower_check(player):
@@ -187,9 +186,4 @@ def hand_check(player):
         print(f"{player.name} skipped scoring this turn.")
         sleep(.85)
         return player
-
-
-
-
-
 
