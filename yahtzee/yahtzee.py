@@ -1,7 +1,5 @@
-from dataclasses import replace
-from multiprocessing.sharedctypes import Value
+
 from random import randint
-from re import L
 from time import sleep
 from yahtzee_pkg import rules
 
@@ -33,7 +31,6 @@ class Player:
           "Chance": 0
         }
       }
-      self.show_score_card = dict()
 
     def create_hand(self): # Create hand if one does not already exist
       if self.hand != []:
@@ -44,7 +41,7 @@ class Player:
         self.hand.append(i)
       return self.hand.sort()
     
-    def create_sh(self): # Sort and create show_hand
+    def create_show_hand(self): # Sort and create show_hand. Used in Reroll. 
       self.show_hand = []
       self.hand.sort()
       for dice in self.hand:
@@ -63,15 +60,15 @@ class Player:
       self.uniques = list(self.uniques)
       return self.uniques
     
-    def show_sc(self, player):
-      print("              Score Card               ")
+    def show_score_card(self, player):
+      print(f"        {player.name}'s Score Card         ")
       print(" ------------------------------------- ") 
       for key, sub_dict in player.score_card.items():
         if key == "Upper":
-          print("| Upper Secttion   |  Scores          |")
+          print("| Upper Section    |  Scores          |")
         elif key == "Lower":
           print(" ------------------------------------- ") 
-          print("| Lower Secttion   |  Scores          |")
+          print("| Lower Section    |  Scores          |")
         for sub_dict, value in sub_dict.items():
           sub_dict_str = f" {sub_dict}: "
           while len(sub_dict_str) < 20:
@@ -81,9 +78,11 @@ class Player:
             total_str = total_str + " "
           print(f"|{total_str}|")
       print(" ------------------------------------- ") 
-      print(f" Your total score: {player.score}")
+      print(f" Your total score: {player.score}\n")
+      input("ENTER to continue.\n")
 
-def start_game():   #  Inits game, asks how many players. 
+### Inits Game, asks how many palyers
+def start_game(): 
   print("Welcome to Yahtzee!")
   print("How many people are playing?\n1. One Player       2. Two Players\n--> ", end='')
   while True:
@@ -101,78 +100,131 @@ def start_game():   #  Inits game, asks how many players.
   num_players = int(num_players)
   return num_players
 
-def player_creation(players): # Recieve's players names, which will be used for rest of game
+### Recieve's players names, which will be used for rest of game
+def player_creation(players): 
   if players == 1:
-    print("Playing solo?")
     name = input("Player 1, enter your name: ")
+    name_valid = False
+    while name_valid != True:
+      if len(name) <= 2:
+        print("Name must at least be 3 characters long.")
+        name = input("Enter your name")
+      elif name.isalpha() != True:
+        print("Name can not contain numbers or other characters.")
+        name = input("Enter your name")
+      else: 
+        name_valid = True
+
     p1 = Player(name)
     p1 = [p1]
     return(p1)
   else:
-    print("Two players? Great!\n")
     name = input("Player 1, enter your name: ")
+    name_valid = False
+    while name_valid != True:
+      if len(name) <= 2:
+        print("Name must at least be 3 characters long.")
+        name = input("Enter your name: ")
+      elif name.isalpha() != True:
+        print("Name can not contain numbers or other characters.")
+        name = input("Enter your name: ")
+      else: 
+        name_valid = True
     p1 = Player(name)
     print(f"Welcome, {p1.name}")
     sleep(.5)
     name = input("Player 2, enter your name: ")
+    name_valid = False
+    while name_valid != True:
+      if len(name) <= 2:
+        print("Name must at least be 3 characters long.")
+        name = input("Enter your name: ")
+      elif name.isalpha() != True:
+        print("Name can not contain numbers or other characters.")
+        name = input("Enter your name: ")
+      else: 
+        name_valid = True
     p2 = Player(name)
     print(f"Welcome, {p2.name}")
     sleep(.5)
     return p1, p2
 
-def is_multiplayer(player_list): #  Checks if there are multiple players from player_creation
+###  Checks if there are multiple players from player_creation
+def is_multiplayer(player_list): 
   if len(player_list) == 2:
     return True
   else: 
     return False
 
-def single_player(player_list): # Single Player game will be played in this function
+### Single Player game will be played in this function
+def single_player(player_list): 
   p1 = player_list[0]
-  p1.create_hand()
-  p1.create_sh()
-  dice_reroller(p1)
-  rules.run_hand_check(p1)
-
-def multiplayer(player_list): # Multiplayer game will be played in this function
+  round = 1
+  print("ROUND 1")
+  while round < 6:
+    # p1.hand = [2, 2, 3, 3, 3]
+    p1.create_hand()
+    p1.create_show_hand()
+    p1 = dice_reroller(p1)
+    rules.hand_check(p1)
+    sleep(.5)
+    p1.show_score_card(p1)
+    p1.hand = []
+    round += 1
+    input(f"\nPRESS ENTER TO START ROUND {round}")
+    
+### Multiplayer game will be played in this function
+def multiplayer(player_list): 
   print("\nWhen prompted, enter the numbers corresponding to each dice you'd like to replace.")
   print("Whenever you want to hold instead of reroll, simply press ENTER.\n")
   sleep(.5)
   p1 = player_list[0]
-  p1.create_hand()
-  p1.create_sh()
   p2 = player_list[1]
-  p2.create_hand()
-  p2.create_sh()
-  p1 = dice_reroller(p1)
-  p2 = dice_reroller(p2)
-  rules.run_hand_check(p1)
-  rules.run_hand_check(p2)
-
-def dice_reroller(player):
+  round = 1
+  while round < 6:
+    p1.create_hand()
+    p1.create_show_hand()
+    p2.create_hand()
+    p2.create_show_hand()
+    p1 = dice_reroller(p1)
+    p2 = dice_reroller(p2)
+    rules.hand_check(p1)
+    rules.hand_check(p2)
+    p1.show_score_card(p1)
+    p2.show_score_card(p2)
+    p1.hand = []
+    p2.hand = []
+    
+### Gives user option to reroll dice
+def dice_reroller(player): 
+  print(f"\n\nSTART **{player.name.upper()}'S** TURN:\n")
   sleep(.75)
-  print("\n-- ROLL #1 --")
-  input(f"**{player.name}**, Press ENTER to roll your starting hand.")
-  print(f"Your starting hand: \n**{player.show_hand}**")
-  sleep(.5)
   i = 1
   while i <= 3 and player.hold == False:
-    if i == 2:
-      print(f"-- ROLL #{i}--")  
-      print(f"\n**{player.name}**, Your new hand: \n**{player.show_hand}**")
+    if i == 1:
+      print(f"-- ROLL #{i} --\n")
+      input(f"**{player.name}**, Press ENTER to roll your starting hand.\n")
+      sleep(.5)
+      print(f"Your starting hand: \n\n**{player.show_hand}**")
+    elif i == 2:
+      print(f"\n-- ROLL #{i}--\n")  
+      print(f"**{player.name}**, Your new hand: \n\n**{player.show_hand}**")
+      sleep(.5)
     elif i == 3:
-      print(f"-- ROLL #{i}--")
-      print(f"\n**{player.name}**, Your final hand: \n**{player.show_hand}**")
+      print(f"\n-- ROLL #{i}--\n")
+      print(f"**{player.name}**, Your final hand: \n\n**{player.show_hand}**")
+      sleep(1)
       return player
     i += 1
     replaced_dice = ""
     replace_list = []
     print("  ^ ^ ^ ^ ^")
-    print("  1 2 3 4 5\n-------------\nReplace which dice? (ENTER to hold.)")
+    print("  1 2 3 4 5\n\n-------------\nReplace which dice? (ENTER to hold.)")
     print("> ", end='')
     replaced_dice = input("")
     if replaced_dice == "": # the 'break' for the reroller
       player.hold = True
-      player.create_sh()
+      player.create_show_hand()
       print(f"{player.name} is holding with {player.show_hand}")
       return player
     for die in replaced_dice:
@@ -180,12 +232,11 @@ def dice_reroller(player):
       die -= 1
       replace_list.append(die)
     player.replace_dice(replace_list)
-    player.create_sh()
+    player.create_show_hand()
   return player
 
-
-
-def yahtzee(): # Game runs in this function alone
+### Game runs in this function
+def yahtzee(): 
   num_players = start_game()
   player_list = player_creation(num_players)
   if is_multiplayer(player_list):
@@ -193,11 +244,117 @@ def yahtzee(): # Game runs in this function alone
   else:
     single_player(player_list)
 
-#   
 
+yahtzee()
+
+#  DC &: Checking upper check
+# p1 = Player("Dylan")
+# p2 = Player("Ash")
+# n = 0
+
+
+# p1.hand = [1, 1, 2, 2, 3] 
+# p2.hand = [4, 5, 5, 6, 6]
+
+# print(f"Test {n}\n")
+# n += 1
+# rules.upper_check(p1) # 1: Aces -- GOOD --
+# p1.show_score_card(p1)
+# input()
+
+# print(f"Test {n}\n")
+# n += 1
+# rules.upper_check(p1) # 2: Threes -- GOOD --
+# p1.show_score_card(p1)
+# input()
+
+# print(f"Test {n}\n")
+# n += 1
+# rules.upper_check(p1) # 3: Twos -- GOOD --
+# p1.show_score_card(p1)
+# input()
+
+# print(f"Test {n}\n")
+# n += 1
+# rules.upper_check(p2) # 4: Fours -- GOOD --
+# p2.show_score_card(p2)
+# input()
+
+# print(f"Test {n}\n")
+# n += 1
+# rules.upper_check(p2) # 1: Fives -- GOOD --
+# p2.show_score_card(p2)
+# input()
+
+# print(f"Test {n}\n")
+# n += 1
+# rules.upper_check(p2) # 1: Sixes -- GOOD --
+# p2.show_score_card(p2)
+# input()
+
+
+
+
+#  DC 6: Checking v1.21 lower check -- GOOD --
+# p1 = Player("Dylan")
+# p2 = Player("Ash")
+
+# print("Test 1\n")
+# p1.hand = [1, 2, 3, 4, 5] # Should return Sm St  -- GOOD --
+# rules.lower_check(p1)
+# p1.show_score_card(p1)
+# input()
+
+# print("\nTest 2\n")
+# p1.hand = [1, 2, 3, 4, 5] # Should return Chance -- GOOD --
+# rules.lower_check(p1)
+# p1.show_score_card(p1)
+# input()
+
+# print("\nTest 3\n")
+# p1.hand = [1, 2, 3, 4, 5] # Should return You can't do that dumby -- GOOD --
+# rules.lower_check(p1)
+# p1.show_score_card(p1)
+# input()
+
+# print("\nTest 4\n")
+# p2.hand = [2, 3, 4, 5, 6] # Schould check Lg Straight -- GOOD --
+# rules.lower_check(p2)
+# p2.show_score_card(p2)
+# input()
+
+# print("\nTest 5\n")
+# p2.hand = [1, 1, 3, 3, 3] # Should Check FH -- GOOD -- 
+# rules.lower_check(p2)
+# p2.show_score_card(p2)
+# input()
+
+# print("\nTest 6\n")
+# p2.hand = [1, 1, 1, 1, 5] # Should check 4 Kind -- GOOD -- 
+# rules.lower_check(p2)
+# p2.show_score_card(p2)
+# input()
+
+# print("\nTest 7\n")
+# p2.hand = [1, 1, 1, 1, 4] # Should check Chance -- GOOD -- 
+# rules.lower_check(p2)
+# p2.show_score_card(p2)
+# input()
+
+# print("\nTest 8\n")
+# p2.hand = [1, 3, 4, 4, 5] # Should check Chance -- GOOD --
+# rules.lower_check(p2)
+# p2.show_score_card(p2)
+# input()
+
+# print("Test 9\n")
+# p1.hand = [6, 6, 6, 6, 6] # Should return Yahtzee -- GOOD --
+# rules.lower_check(p1)
+# p1.show_score_card(p1)
+# input()
 
 #  DC 5: Testing various checks
-yahtzee()
+# yahtzee()
 # dyl = Player("Dyl")
 # dyl.hand = [1, 1, 1, 1, 1] # Displayed Yahtzee, score 50
 # dyl = rules.yahtzee_check(dyl)
